@@ -31,50 +31,65 @@ options:
   selinux_user:
     description:
         - "SELinux user name, like system_u or guest_u"
+    required: false
+    default: null
   selinux_roles:
     description:
         - "Space delimited list of SELinux role names, like: staff_r sysadm_r"
+    required: false
+    default: null
   selinux_type:
     description:
         - "SELinux type name, like http_port_t or bin_t"
+    required: false
+    default: null
   selinux_module:
     description:
         - "SELinux module name"
     required: false
+    default: null
   selinux_boolean:
     description:
         - "SELinux boolean name"
     required: false
+    default: null
   boolean:
     description:
         - "Set an SELinux boolean (requires selinux_boolean)"
         - "    (Both run-time and boot-time values are set, like setsebool -P)"
     required: false
     choices: [ 'true', 'false' ]
+    default: null
   user_roles:
     description:
         - "Assign one or more SELinux roles to a user context"
         - "(requires selinux_user, selinux_roles)"
     required: false
     choices: [ 'assigned' ]
+    default: None
   login_name:
     description:
         - "Login username"
+    required: false
+    default: null
   login_user:
     description:
         - "Delete or assign a Linux login to an SELinux user context"
         - "(requires login_name, selinux_user)"
     required: false
     choices: [ 'assigned', 'deleted' ]
+    default: null
   module:
     description:
         - "Enable or disable an SELinux module (requires selinux_module)"
     required: false
     choices: [ 'enabled', 'disabled' ]
+    default: null
   port_range:
     description:
         - "Network port number or range, like 80 or 135-139 (required for port=)"
     required: false
+    default: null
   protocol:
     description:
         - "Network protocol (used in port=, default tcp)"
@@ -86,10 +101,12 @@ options:
         - "(requires selinux_type, port_range)"
     required: false
     choices: [ 'assigned', 'deleted' ]
+    default: null
   file_spec:
     description:
         - "File spec regular expression (used in fcontext=)"
     required: false
+    default: null
   file_type:
     description:
         - "File type (used in fcontext=). Must be one of: socket, regular file,
@@ -107,12 +124,14 @@ options:
         - "      If you need restorecon, you must run it separately."
     required: false
     choices: [ 'assigned', 'deleted' ]
+    default: null
   permissive:
     description:
         - "Add or remove an SELinux type to/from the permissive list"
         - "(requires: selinux_type)"
     required: false
     choices: [ 'added', 'deleted' ]
+    default: null
   no_reload:
     description:
         - "Suppress reloading SELinux policies after the change is made (default is to reload)"
