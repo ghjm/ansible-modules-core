@@ -339,8 +339,8 @@ def main():
             'desired_state': module.params['boolean'],
             'get_item_state': lambda seobj: get_boolean(seobj, module.params['selinux_boolean']),
             'set_item_state': {
-                True:  lambda(seobj): seobj.modify(module.params['selinux_boolean'], 'true'),
-                False: lambda(seobj): seobj.modify(module.params['selinux_boolean'], 'false'),
+                True:  lambda seobj: seobj.modify(module.params['selinux_boolean'], 'true'),
+                False: lambda seobj: seobj.modify(module.params['selinux_boolean'], 'false'),
                 },
             },
         'user_roles': {
@@ -349,7 +349,7 @@ def main():
             'desired_state': True,
             'get_item_state': lambda seobj: get_user_roles(seobj, module.params['selinux_user']) == sort_roles(module.params['selinux_roles']),
             'set_item_state': {
-                True:  lambda(seobj): set_user_roles(seobj, module.params['selinux_user'], module.params['selinux_roles']),
+                True:  lambda seobj: set_user_roles(seobj, module.params['selinux_user'], module.params['selinux_roles']),
                 },
             },
         'login_user': {
@@ -358,8 +358,8 @@ def main():
             'desired_state': CompareAndReturnValue(module.params['login_user'], 'deleted', None, True),
             'get_item_state': lambda seobj: check_login_user(seobj, module.params['login_name'], module.params['selinux_user']),
             'set_item_state': {
-                True: lambda(seobj): set_login_user(seobj, module.params['login_name'], module.params['selinux_user']),
-                None: lambda(seobj): seobj.delete(module.params['login_name']),
+                True: lambda seobj: set_login_user(seobj, module.params['login_name'], module.params['selinux_user']),
+                None: lambda seobj: seobj.delete(module.params['login_name']),
                 },
             },
         'module': {
@@ -368,8 +368,8 @@ def main():
             'desired_state': module.params['module'] == 'enabled',
             'get_item_state': lambda seobj: get_module_enabled(seobj, module.params['selinux_module']),
             'set_item_state': {
-                True:  lambda(seobj): seobj.enable(module.params['selinux_module']),
-                False: lambda(seobj): seobj.disable(module.params['selinux_module']),
+                True:  lambda seobj: seobj.enable(module.params['selinux_module']),
+                False: lambda seobj: seobj.disable(module.params['selinux_module']),
                 },
             },
         'port': {
@@ -378,8 +378,8 @@ def main():
             'desired_state': CompareAndReturnValue(module.params['port'], 'deleted', None, True),
             'get_item_state': lambda seobj: check_port_state(seobj, module.params['selinux_type'], module.params['port_range'], module.params['protocol']),
             'set_item_state': {
-                True:  lambda(seobj): seobj.add(module.params['port_range'], module.params['protocol'], None, module.params['selinux_type']),
-                None: lambda(seobj): seobj.delete(module.params['port_range'], module.params['protocol']),
+                True:  lambda seobj: seobj.add(module.params['port_range'], module.params['protocol'], None, module.params['selinux_type']),
+                None: lambda seobj: seobj.delete(module.params['port_range'], module.params['protocol']),
                 },
             },
         'fcontext': {
@@ -388,8 +388,8 @@ def main():
             'desired_state': CompareAndReturnValue(module.params['fcontext'], 'deleted', None, True),
             'get_item_state': lambda seobj: check_fcontext_state(seobj, module.params['selinux_user'], module.params['selinux_type'], module.params['file_spec'], module.params['file_type']),
             'set_item_state': {
-                True:  lambda(seobj): seobj.add(module.params['file_spec'], module.params['selinux_type'], ftype=module.params['file_type'], serange=""),
-                None: lambda(seobj): seobj.delete(module.params['file_spec'], module.params['file_type']),
+                True:  lambda seobj: seobj.add(module.params['file_spec'], module.params['selinux_type'], ftype=module.params['file_type'], serange=""),
+                None: lambda seobj: seobj.delete(module.params['file_spec'], module.params['file_type']),
                 },
             },
         'permissive': {
@@ -399,8 +399,8 @@ def main():
             'get_item_state': 
                 lambda seobj: module.params['selinux_type'] in seobj.get_all(),
             'set_item_state': {
-                True:  lambda(seobj): seobj.add(module.params['selinux_type']),
-                False: lambda(seobj): seobj.delete(module.params['selinux_type']),
+                True:  lambda seobj: seobj.add(module.params['selinux_type']),
+                False: lambda seobj: seobj.delete(module.params['selinux_type']),
                 },
             },
         }
