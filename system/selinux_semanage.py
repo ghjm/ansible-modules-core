@@ -198,6 +198,14 @@ def get_boolean(seobj, boolean_name):
     else:
         return seboolval != 0
 
+def set_boolean(seobj, boolean_name, boolean_value):
+    # Older seobject expects a bool, newer expects a string
+    try:
+        seobj.modify(boolean_name, boolean_value)
+    except AttributeError, e:
+        seobj.modify(boolean_name, str(boolean_value))
+
+
 def get_module_enabled(seobj, module_name):
     for mod in seobj.get_all():
         if mod[0]==module_name:
@@ -339,8 +347,8 @@ def main():
             'desired_state': module.params['boolean'],
             'get_item_state': lambda seobj: get_boolean(seobj, module.params['selinux_boolean']),
             'set_item_state': {
-                True:  lambda seobj: seobj.modify(module.params['selinux_boolean'], 'true'),
-                False: lambda seobj: seobj.modify(module.params['selinux_boolean'], 'false'),
+                True:  lambda seobj: set_boolean(seobj, module.params['selinux_boolean'], True),
+                False: lambda seobj: set_boolean(seobj, module.params['selinux_boolean'], False),
                 },
             },
         'user_roles': {
