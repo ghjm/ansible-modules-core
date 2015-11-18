@@ -190,6 +190,14 @@ try:
 except ImportError:
     pass
 
+def get_boolean(seobj, boolean_name):
+    seboolval = seobj.get_all()[boolean_name]
+    # Older seobject returns a scalar, newer seobject returns a tuple
+    if isinstance(seboolval, list):
+        return seboolval[0] != 0
+    else:
+        return seboolval != 0
+
 def get_module_enabled(seobj, module_name):
     for mod in seobj.get_all():
         if mod[0]==module_name:
@@ -261,6 +269,13 @@ def check_fcontext_state(seobj, selinux_user, selinux_type, file_spec, file_type
         return False
     return selinux_type == setype
 
+def CompareAndReturnValue(comp1, comp2, value_if_equal, value_if_not_equal):
+    # Used instead of inline conditional, for Python 2.4 compatibility
+    if comp1 == comp2:
+        return value_if_equal
+    else:
+        return value_if_not_equal
+
 def main():
     
     module = AnsibleModule(
@@ -322,7 +337,7 @@ def main():
             'get_seobject': lambda: seobject.booleanRecords(store),
             'item_name': module.params['selinux_boolean'],
             'desired_state': module.params['boolean'],
-            'get_item_state': lambda seobj: seobj.get_all()[module.params['selinux_boolean']][0] != 0,
+            'get_item_state': lambda seobj: get_boolean(seobj, module.params['selinux_boolean']),
             'set_item_state': {
                 True:  lambda(seobj): seobj.modify(module.params['selinux_boolean'], 'true'),
                 False: lambda(seobj): seobj.modify(module.params['selinux_boolean'], 'false'),
@@ -340,7 +355,7 @@ def main():
         'login_user': {
             'get_seobject': lambda: seobject.loginRecords(store),
             'item_name': module.params['login_name'],
-            'desired_state': None if module.params['login_user'] == 'deleted' else True,
+            'desired_state': CompareAndReturnValue(module.params['login_user'], 'deleted', None, True),
             'get_item_state': lambda seobj: check_login_user(seobj, module.params['login_name'], module.params['selinux_user']),
             'set_item_state': {
                 True: lambda(seobj): set_login_user(seobj, module.params['login_name'], module.params['selinux_user']),
@@ -360,7 +375,7 @@ def main():
         'port': {
             'get_seobject': lambda: seobject.portRecords(store),
             'item_name': str(module.params['port_range']) + '/' + str(module.params['protocol']),
-            'desired_state': None if module.params['port'] == 'deleted' else True,
+            'desired_state': CompareAndReturnValue(module.params['port'], 'deleted', None, True),
             'get_item_state': lambda seobj: check_port_state(seobj, module.params['selinux_type'], module.params['port_range'], module.params['protocol']),
             'set_item_state': {
                 True:  lambda(seobj): seobj.add(module.params['port_range'], module.params['protocol'], None, module.params['selinux_type']),
@@ -370,7 +385,7 @@ def main():
         'fcontext': {
             'get_seobject': lambda: seobject.fcontextRecords(store),
             'item_name': module.params['file_spec'],
-            'desired_state': None if module.params['fcontext'] == 'deleted' else True,
+            'desired_state': CompareAndReturnValue(module.params['fcontext'], 'deleted', None, True),
             'get_item_state': lambda seobj: check_fcontext_state(seobj, module.params['selinux_user'], module.params['selinux_type'], module.params['file_spec'], module.params['file_type']),
             'set_item_state': {
                 True:  lambda(seobj): seobj.add(module.params['file_spec'], module.params['selinux_type'], ftype=module.params['file_type'], serange=""),
