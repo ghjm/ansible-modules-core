@@ -109,8 +109,8 @@ options:
     default: null
   file_type:
     description:
-        - "File type (used in fcontext=). Must be one of: socket, regular file,
-        - "character device, all files, directory, block device, named pipe,
+        - "File type (used in fcontext=). Must be one of: socket, regular file,"
+        - "character device, all files, directory, block device, named pipe,"
         - "symbolic link. Defaults to all files."
     required: false
     default: "a"
